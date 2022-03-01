@@ -97,6 +97,18 @@ nb_path: "index.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="DataFrames-in-GitHub-Markdown">DataFrames in GitHub Markdown<a class="anchor-link" href="#DataFrames-in-GitHub-Markdown"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="The-Issue">The Issue<a class="anchor-link" href="#The-Issue"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>The default pandas output uses a <code>&lt;style scoped&gt;...&lt;/style&gt;</code> element, which is neither
 stripped nor formatted nicely by GitHub.</p>
 
@@ -111,7 +123,7 @@ stripped nor formatted nicely by GitHub.</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;col1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;col2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]}</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;col1&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="s1">&#39;col2&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))}</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 <span class="n">df</span>
 </pre></div>
@@ -151,16 +163,62 @@ stripped nor formatted nicely by GitHub.</p>
   <tbody>
     <tr>
       <th>0</th>
-      <td>1</td>
-      <td>3</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>1</th>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
       <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
       <td>4</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>95</td>
+      <td>95</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>96</td>
+      <td>96</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>97</td>
+      <td>97</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>98</td>
+      <td>98</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>99</td>
+      <td>99</td>
     </tr>
   </tbody>
 </table>
+<p>100 rows × 2 columns</p>
 </div></div>
 
 </div>
@@ -171,6 +229,12 @@ stripped nor formatted nicely by GitHub.</p>
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="A-Solution">A Solution<a class="anchor-link" href="#A-Solution"> </a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Subclassing DataFrame, we can display the df without the <code>&lt;style...</code> bit.</p>
@@ -185,10 +249,27 @@ stripped nor formatted nicely by GitHub.</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">MyDF</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">class</span> <span class="nc">GitHubMarkdownDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DataFrame that strips &lt;style&gt; tags when used in a Notebook.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
+        <span class="sd">&quot;&quot;&quot;Override parent&#39;s method.&quot;&quot;&quot;</span>
+        <span class="n">original</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_repr_html_</span><span class="p">()</span>
+
+        <span class="c1"># See https://stackoverflow.com/a/55148480/3324095</span>
+        <span class="n">stripped</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+            <span class="s2">&quot;&lt;style scoped&gt;.*&lt;/style&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># replace the CSS...</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># ...with an empty string</span>
+            <span class="n">original</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">,</span>  <span class="c1"># match across multiple \n lines</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">stripped</span>
 </pre></div>
 
     </div>
@@ -205,7 +286,7 @@ stripped nor formatted nicely by GitHub.</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">MyDF</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">GitHubMarkdownDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -218,7 +299,8 @@ stripped nor formatted nicely by GitHub.</p>
 <div class="output_area">
 
 
-<div class="output_html rendered_html output_subarea output_execute_result"><table border="1" class="dataframe">
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th></th>
@@ -229,19 +311,250 @@ stripped nor formatted nicely by GitHub.</p>
   <tbody>
     <tr>
       <th>0</th>
-      <td>1</td>
-      <td>3</td>
+      <td>0</td>
+      <td>0</td>
     </tr>
     <tr>
       <th>1</th>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
       <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
       <td>4</td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>95</td>
+      <td>95</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>96</td>
+      <td>96</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>97</td>
+      <td>97</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>98</td>
+      <td>98</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>99</td>
+      <td>99</td>
+    </tr>
   </tbody>
-</table></div>
+</table>
+<p>100 rows × 2 columns</p>
+</div></div>
 
 </div>
 
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Not-a-good-solution">Not a good solution<a class="anchor-link" href="#Not-a-good-solution"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pandas.io.formats.style</span> <span class="kn">import</span> <span class="n">Styler</span>
+<span class="c1"># from pandas.util._decorators import (</span>
+    <span class="c1"># Substitution,</span>
+<span class="c1"># )</span>
+
+<span class="k">class</span> <span class="nc">MyOtherDF</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">style</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Styler</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a Styler object.</span>
+<span class="sd">        Contains methods for building a styled HTML representation of the DataFrame.</span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        io.formats.style.Styler : Helps style a DataFrame or Series according to the</span>
+<span class="sd">            data with HTML and CSS.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># raise Exception()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;in style&quot;</span><span class="p">)</span>
+        <span class="k">class</span> <span class="nc">MyStyler</span><span class="p">(</span><span class="n">Styler</span><span class="p">):</span>
+            <span class="c1"># @Substitution(buf=buf, encoding=encoding)</span>
+            <span class="k">def</span> <span class="nf">to_html</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;calling super.to_html&quot;</span><span class="p">)</span>
+                <span class="c1"># kwargs[&quot;exclude_styles&quot;] = True</span>
+                <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            
+            <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;in repr&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_repr_html_</span><span class="p">()</span>
+            
+        <span class="k">return</span> <span class="n">MyStyler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">MyOtherDF</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>col1</th>
+      <th>col2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>95</td>
+      <td>95</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>96</td>
+      <td>96</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>97</td>
+      <td>97</td>
+    </tr>
+    <tr>
+      <th>98</th>
+      <td>98</td>
+      <td>98</td>
+    </tr>
+    <tr>
+      <th>99</th>
+      <td>99</td>
+      <td>99</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 2 columns</p>
+</div></div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 
