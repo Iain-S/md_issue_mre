@@ -23,6 +23,9 @@ Fill me in please! Don't forget code examples:
 
 
 
+The default pandas output uses a `<style scoped>...</style>` element, which is neither
+stripped nor formatted nicely by GitHub.
+
 ```python
 import pandas as pd
 d = {'col1': [1, 2], 'col2': [3, 4]}
@@ -72,16 +75,7 @@ df
 
 
 
-```python
-df.to_html()
-```
-
-
-
-
-    '<table border="1" class="dataframe">\n  <thead>\n    <tr style="text-align: right;">\n      <th></th>\n      <th>col1</th>\n      <th>col2</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>0</th>\n      <td>1</td>\n      <td>3</td>\n    </tr>\n    <tr>\n      <th>1</th>\n      <td>2</td>\n      <td>4</td>\n    </tr>\n  </tbody>\n</table>'
-
-
+Subclassing DataFrame, we can display the df without the `<style...` bit.
 
 ```python
 class MyDF(pd.DataFrame):
@@ -118,51 +112,5 @@ MyDF(data=df)
     </tr>
   </tbody>
 </table>
-
-
-
-```python
-df
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>col1</th>
-      <th>col2</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>4</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
 
